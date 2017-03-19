@@ -26,8 +26,8 @@ class API:
         })
         req = urllib.request.Request('{}://{}/oauth/token'.format(self.scheme, self.server), args.encode())
         res = urllib.request.urlopen(req)
-        data = json.load(res)
-        self.log.info("Authorized for {}s".format(data['expires_in']))
+        raw_data = res.read().decode()
+        data = json.loads(raw_data)
         return data
 
     def __authorize(self, req):
@@ -42,7 +42,8 @@ class API:
         req = urllib.request.Request('{}://{}/api/v2{}'.format(self.scheme, self.server, resource))
         self.__authorize(req)
         res = urllib.request.urlopen(req)
-        data = json.load(res)
+        raw_data = res.read().decode()
+        data = json.loads(raw_data)
         return data
 
     def getUser(self):
