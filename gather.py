@@ -2,8 +2,6 @@
 
 import json
 import urllib.request, urllib.parse, urllib.error
-import coloredlogs, logging
-import pprint
 import csv
 import sys, os
 import datetime
@@ -13,10 +11,7 @@ import private
 ## wrappers
 
 class API:
-    log = logging.getLogger("API")
-
     def __login(self, username, password):
-        self.log.info("Authorizing for {}".format(username))
         args = urllib.parse.urlencode({
             'client_id': 'tado-webapp',
             'grant_type': 'password',
@@ -136,8 +131,6 @@ class Device:
 
 
 ## main
-
-coloredlogs.install()
 
 api = API(private.username, private.password)
 
