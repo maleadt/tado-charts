@@ -11,20 +11,21 @@ import matplotlib.ticker as ticker
 import matplotlib.patches as mpatches
 
 def parse(zone):
-    timestamp = []
+    timestamps = []
     values = []
 
     csv_reader = csv.reader(open(zone + ".csv"))
     for line in csv_reader:
-        timestamp.append(dateutil.parser.parse(line.pop(0)))
+        timestamp = dateutil.parser.parse(line.pop(0))
+        timestamps.append(timestamp)
         for i in range(len(line)):
             if i >= len(values):
                 values.append([])
             values[i].append(float(line[i]))
 
-    return timestamp, values
+    return timestamps, values
 
-def plot(zone, timestamp, values, time_lower, time_upper, name):
+def plot(zone, timestamps, values, time_lower, time_upper, name):
     # mask NaNs and decode values
     for i in range(len(values)):
         values[i] = numpy.ma.masked_where(numpy.isnan(values[i]), values[i])
@@ -43,11 +44,11 @@ def plot(zone, timestamp, values, time_lower, time_upper, name):
     ax1.xaxis.set_major_locator(mdates.HourLocator())
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-    ax1.plot(timestamp, outsideTemperature, 'y-', label="Outside")
+    ax1.plot(timestamps, outsideTemperature, 'y-', label="Outside")
 
-    ax1.plot(timestamp, setpoint, 'g-', alpha=.5, label="Requested")
+    ax1.plot(timestamps, setpoint, 'g-', alpha=.5, label="Requested")
 
-    ax1.plot(timestamp, temperature, 'r-', label="Measured")
+    ax1.plot(timestamps, temperature, 'r-', label="Measured")
 
     ax1.legend(loc='lower left', bbox_to_anchor=(0, -0.11, 1, 0), ncol=3,
                fancybox=True, shadow=True)
@@ -65,11 +66,11 @@ def plot(zone, timestamp, values, time_lower, time_upper, name):
     ax2.xaxis.set_major_locator(mdates.HourLocator())
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-    p1 = ax2.plot(timestamp, humidity, 'b-', alpha=.1, label="Humidity")
-    ax2.fill_between(timestamp, 0, humidity, color='b', alpha=.1)
+    p1 = ax2.plot(timestamps, humidity, 'b-', alpha=.1, label="Humidity")
+    ax2.fill_between(timestamps, 0, humidity, color='b', alpha=.1)
 
-    p2 = ax2.plot(timestamp, heatingpower, 'r-', alpha=.15, label="Heating power")
-    ax2.fill_between(timestamp, 0, heatingpower, color='r', alpha=.15)
+    p2 = ax2.plot(timestamps, heatingpower, 'r-', alpha=.15, label="Heating power")
+    ax2.fill_between(timestamps, 0, heatingpower, color='r', alpha=.15)
 
     # the fill_between can't be represented directly in the legend,
     # so create proxy agents which don't live in the plot
@@ -89,15 +90,15 @@ def plot(zone, timestamp, values, time_lower, time_upper, name):
 
 
 for zone in ["Living", "Bureau", "Badkamer"]:
-    timestamp, values = parse(zone)
+    timestamps, values = parse(zone)
 
-    start = timestamp[0]
-    end = timestamp[-1]
+    start = timestamps[0]
+    end = timestamps[-1]
 
     # plot daily charts
     time_lower = start.replace(hour=0, minute=0, second=0, microsecond=0)
     while time_lower < end:
         time_upper = time_lower + datetime.timedelta(days=1)
-        plot(zone, timestamp, values, time_lower, time_upper,
+        plot(zone, timestamps, values, time_lower, time_upper,
              "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
         time_lower = time_upper
