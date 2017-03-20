@@ -3,6 +3,8 @@
 import csv
 import datetime
 import dateutil.parser
+import numpy
+import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
@@ -23,6 +25,9 @@ def parse(zone):
     return timestamp, values
 
 def plot(zone, timestamp, values, time_lower, time_upper, name):
+    # mask NaNs and decode values
+    for i in range(len(values)):
+        values[i] = numpy.ma.masked_where(numpy.isnan(values[i]), values[i])
     outsideTemperature, setpoint, temperature, humidity, heatingpower = values
 
     fig, ax1 = plt.subplots(figsize=(15,7))

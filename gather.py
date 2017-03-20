@@ -8,6 +8,8 @@ import datetime
 
 import private
 
+NaN = float("NaN")
+
 ## wrappers
 
 class API:
@@ -151,7 +153,7 @@ for name in ["Living", "Bureau", "Badkamer"]:
 
     overlay = state.get("overlay", None)
     setting = overlay["setting"] if overlay else state["setting"]
-    setpoint = setting["temperature"]["celsius"]
+    setpoint = setting["temperature"]["celsius"] if setting["power"] == 'ON' else NaN
 
     dirname = os.path.dirname(sys.argv[0])
     filename = "{}/{}.csv".format(dirname, name)
