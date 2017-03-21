@@ -94,7 +94,13 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
 
     # finalize
 
-    plt.title(zone, fontsize=26)
+    now = datetime.datetime.now()
+    plt.title("{} at {}".format(zone, now.strftime("%Y-%m-%d")), fontsize=26)
+    ax1.annotate('Last update: {}'.format(now.strftime("%H:%M")),
+                 fontsize=10, color="gray",
+                 xy=(1, 1), xycoords='axes fraction',
+                 horizontalalignment='right', verticalalignment='upper')
+
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.1)
 
