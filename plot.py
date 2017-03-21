@@ -35,18 +35,21 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
         values[i] = numpy.ma.masked_where(numpy.isnan(values[i]), values[i])
     outsideTemperature, setpoint, temperature, humidity, heatingpower = values
 
+
+    # initialize
+
     fig, ax1 = plt.subplots(figsize=(15,7))
 
 
     # temperatures
 
-    ax1.set_ylabel('temperature (celsius)')
-    ax1.yaxis.set_major_locator(ticker.MultipleLocator(1))
-    ax1.yaxis.grid(alpha=0.25)
-
     ax1.set_xlim([time_lower, time_upper])
     ax1.xaxis.set_major_locator(mdates.HourLocator())
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+
+    ax1.set_ylabel('temperature (celsius)')
+    ax1.yaxis.set_major_locator(ticker.MultipleLocator(1))
+    ax1.yaxis.grid(alpha=0.25)
 
     ax1.plot(timestamps, outsideTemperature, 'y-', label="Outside")
 
@@ -62,13 +65,13 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
 
     ax2 = ax1.twinx()
 
-    ax2.set_ylabel('percentage')
-    ax2.set_ylim([0,100])
-    ax2.yaxis.set_major_locator(ticker.MultipleLocator(10))
-
     ax2.set_xlim([time_lower, time_upper])
     ax2.xaxis.set_major_locator(mdates.HourLocator())
     ax2.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+
+    ax2.set_ylabel('percentage')
+    ax2.set_ylim([0,100])
+    ax2.yaxis.set_major_locator(ticker.MultipleLocator(10))
 
     p1 = ax2.plot(timestamps, humidity, 'b-', alpha=.1, label="Humidity")
     ax2.fill_between(timestamps, 0, humidity, color='b', alpha=.1)
@@ -87,6 +90,7 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
 
 
     # finalize
+
     plt.title(zone, fontsize=26)
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.1)
