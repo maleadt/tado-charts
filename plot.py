@@ -95,10 +95,8 @@ for zone in ["Living", "Bureau", "Badkamer"]:
     start = timestamps[0]
     end = timestamps[-1]
 
-    # plot daily charts
-    time_lower = start.replace(hour=0, minute=0, second=0, microsecond=0)
-    while time_lower < end:
-        time_upper = time_lower + datetime.timedelta(days=1)
-        plot(zone, timestamps, values, time_lower, time_upper,
-             "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
-        time_lower = time_upper
+    # plot daily chart
+    time_lower = end.replace(hour=0, minute=0, second=0, microsecond=0)
+    time_upper = time_lower + datetime.timedelta(days=1)
+    plot(zone, timestamps, values, time_lower, time_upper,
+         "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
