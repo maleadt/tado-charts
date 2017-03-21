@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import csv
+import pytz
 import datetime
 import dateutil.parser
 import numpy
@@ -10,13 +11,16 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import matplotlib.patches as mpatches
 
+local_timezone = 'Europe/Brussels'
+matplotlib.rcParams['timezone'] = local_timezone
+
 def parse(zone):
     timestamps = []
     values = []
 
     csv_reader = csv.reader(open(zone + ".csv"))
     for line in csv_reader:
-        timestamp = dateutil.parser.parse(line.pop(0))
+        timestamp = pytz.utc.localize(dateutil.parser.parse(line.pop(0)))
         timestamps.append(timestamp)
         for i in range(len(line)):
             if i >= len(values):
@@ -92,11 +96,12 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
 for zone in ["Living", "Bureau", "Badkamer"]:
     timestamps, values = parse(zone)
 
+    tz = pytz.timezone(local_timezone)
     start = timestamps[0]
     end = timestamps[-1]
 
     # plot daily chart
-    time_lower = end.replace(hour=0, minute=0, second=0, microsecond=0)
+    time_lower = tz.normalize(end).replace(hour=0, minute=0, second=0, microsecond=0)
     time_upper = time_lower + datetime.timedelta(days=1)
     plot(zone, timestamps, values, time_lower, time_upper,
          "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
