@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import csv
 import pytz
 import datetime
@@ -18,7 +20,8 @@ def parse(zone):
     timestamps = []
     values = []
 
-    csv_reader = csv.reader(open(zone + ".csv"))
+    dirname = os.path.dirname(sys.argv[0])
+    csv_reader = csv.reader(open("{}/{}.csv".format(dirname, zone)))
     for line in csv_reader:
         timestamp = pytz.utc.localize(dateutil.parser.parse(line.pop(0)))
         timestamps.append(timestamp)
@@ -94,7 +97,9 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     plt.title(zone, fontsize=26)
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.1)
-    plt.savefig(name + '.png')
+
+    dirname = os.path.dirname(sys.argv[0])
+    plt.savefig("{}/{}.png".format(dirname, name))
 
 
 for zone in ["Living", "Bureau", "Badkamer"]:
