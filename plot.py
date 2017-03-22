@@ -37,7 +37,7 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     # temperature can be NaN (heating off)
     temperature = numpy.ma.masked_where(numpy.isnan(temperature), temperature)
     # also mask heatingpower==0 for clarity
-    heatingpower = numpy.ma.masked_where(numpy.array(heatingpower)==0., heatingpower)
+    heatingpower = numpy.ma.masked_where(numpy.array(heatingpower) == 0, heatingpower)
 
 
     # initialize
