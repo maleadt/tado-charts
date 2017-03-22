@@ -1,0 +1,5 @@
+env
+*.csv
+*.png
+__pycache__
+private.py
