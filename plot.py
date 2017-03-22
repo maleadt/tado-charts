@@ -33,10 +33,11 @@ def parse(zone):
     return timestamps, values
 
 def plot(zone, timestamps, values, time_lower, time_upper, name):
-    # mask NaNs and decode values
-    for i in range(len(values)):
-        values[i] = numpy.ma.masked_where(numpy.isnan(values[i]), values[i])
     outsideTemperature, setpoint, temperature, humidity, heatingpower = values
+    # temperature can be NaN (heating off)
+    temperature = numpy.ma.masked_where(numpy.isnan(temperature), temperature)
+    # also mask heatingpower==0 for clarity
+    heatingpower = numpy.ma.masked_where(numpy.array(heatingpower)==0., heatingpower)
 
 
     # initialize
