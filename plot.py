@@ -51,15 +51,18 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     ax1.xaxis.set_major_locator(mdates.HourLocator())
     ax1.xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 
-    ax1.set_ylabel('temperature (celsius)')
+    ax1.set_ylabel('temperature (°celsius)')
     ax1.yaxis.set_major_locator(ticker.MultipleLocator(1))
     ax1.yaxis.grid(alpha=0.25)
 
-    ax1.plot(timestamps, outsideTemperature, 'y-', label="Outside")
+    ax1.plot(timestamps, outsideTemperature, label="Outside",
+             linestyle="solid", color="darkgreen")
 
-    ax1.plot(timestamps, setpoint, 'g-', alpha=.5, label="Requested")
+    ax1.plot(timestamps, setpoint, label="Requested",
+             linestyle="solid", color="darkorange")
 
-    ax1.plot(timestamps, temperature, 'r-', label="Measured")
+    ax1.plot(timestamps, temperature, label="Measured",
+             linestyle="solid", color="red")
 
     ax1.legend(loc='lower left', bbox_to_anchor=(0, -0.11, 1, 0), ncol=3,
                fancybox=True, shadow=True)
@@ -77,10 +80,12 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     ax2.set_ylim([0,100])
     ax2.yaxis.set_major_locator(ticker.MultipleLocator(10))
 
-    p1 = ax2.plot(timestamps, humidity, 'b-', alpha=.1, label="Humidity")
+    p1 = ax2.plot(timestamps, humidity, label="Humidity",
+                  linestyle="solid", color="blue", alpha=.1,)
     ax2.fill_between(timestamps, 0, humidity, color='b', alpha=.1)
 
-    p2 = ax2.plot(timestamps, heatingpower, 'r-', alpha=.15, label="Heating power")
+    p2 = ax2.plot(timestamps, heatingpower, label="Heating power",
+                  linestyle="solid", color="red", alpha=.15)
     ax2.fill_between(timestamps, 0, heatingpower, color='r', alpha=.15)
 
     # the fill_between can't be represented directly in the legend,
@@ -96,7 +101,6 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     # finalize
 
     now = datetime.datetime.now()
-    plt.title("{} at {}".format(zone, now.strftime("%Y-%m-%d")), fontsize=26)
     ax1.annotate('Last update: {}'.format(now.strftime("%H:%M")),
                  fontsize=10, color="gray",
                  xy=(1, 1), xycoords='axes fraction',
