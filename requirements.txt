@@ -1,0 +1,4 @@
+pytz==2016.10
+python-dateutil==2.6.0
+numpy==1.12.1
+matplotlib==2.0.0
