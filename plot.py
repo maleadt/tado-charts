@@ -13,8 +13,8 @@ import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
 import matplotlib.patches as mpatches
 
-local_timezone = 'Europe/Brussels'
-matplotlib.rcParams['timezone'] = local_timezone
+import private
+
 
 def parse(zone):
     timestamps = []
@@ -113,10 +113,14 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     plt.savefig("{}/{}.png".format(dirname, name))
 
 
-for zone in ["Living", "Bureau", "Badkamer"]:
+## main
+
+matplotlib.rcParams['timezone'] = private.timezone
+
+for zone in private.zones:
     timestamps, values = parse(zone)
 
-    tz = pytz.timezone(local_timezone)
+    tz = pytz.timezone(private.timezone)
     start = timestamps[0]
     end = timestamps[-1]
 

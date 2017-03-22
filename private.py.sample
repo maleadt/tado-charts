@@ -2,3 +2,6 @@ username = "foo"
 password = "bar"
 
 home = "Foo's Home"
+zones = ["Kitchen", "Bedroom"]
+
+timezone = 'Europe/Brussels'

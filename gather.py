@@ -142,7 +142,7 @@ home = me.getHome(name=private.home)
 weather = home.getWeather()
 outsideTemperature = weather["outsideTemperature"]["celsius"]
 
-for name in ["Living", "Bureau", "Badkamer"]:
+for name in private.zones:
     zone = home.getZone(name=name)
     state = zone.getState()
 
