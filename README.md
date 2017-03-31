@@ -19,8 +19,8 @@ $ . env/bin/activate
 $ pip install -r tado-charts/requirements.txt
 ```
 
-Note that you need to activate the virtual environment every time you want to use it,
-or explicitely use one of the `python` binaries in the `bin` subfolder.
+Note that you need to activate the virtual environment every time you want to use it, or
+explicitly use one of the `python` binaries in the `bin` subfolder.
 
 
 ## Usage
