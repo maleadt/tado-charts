@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
 
 import json
-import urllib.request, urllib.parse, urllib.error
-import csv
-import sys, os
-import datetime
+import urllib.request
+import urllib.parse
+import urllib.error
+import pymysql
 
 import private
 
-NaN = float("NaN")
 
 ## wrappers
 
@@ -134,6 +133,11 @@ class Device:
 
 ## main
 
+mysql = pymysql.connect(host=private.mysql_hostname,
+                        user=private.mysql_user,
+                        password=private.mysql_password,
+                        db=private.mysql_db)
+
 api = API(private.username, private.password)
 
 me = api.getUser()
@@ -153,11 +157,16 @@ for name in private.zones:
 
     overlay = state.get("overlay", None)
     setting = overlay["setting"] if overlay else state["setting"]
-    setpoint = setting["temperature"]["celsius"] if setting["power"] == 'ON' else NaN
+    setpoint = setting["temperature"]["celsius"] if setting["power"] == 'ON' else None
 
-    dirname = os.path.dirname(sys.argv[0])
-    filename = "{}/{}.csv".format(dirname, name)
-    with open(filename, 'a') as file:
-        writer = csv.writer(file)
-        writer.writerow([datetime.datetime.utcnow().isoformat(),
-                         outsideTemperature, setpoint, temperature, humidity, heatingpower])
+    with mysql.cursor() as cursor:
+        sql = """
+            INSERT INTO `{}`
+                (outsideTemperature, setpoint, temperature, humidity, heatingpower)
+                 VALUES(%s,%s,%s,%s,%s)
+        """.format(name)
+        cursor.execute(sql, (outsideTemperature, setpoint, temperature, humidity, heatingpower))
+
+    mysql.commit()
+
+mysql.close()

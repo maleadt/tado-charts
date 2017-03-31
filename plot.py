@@ -2,12 +2,9 @@
 
 import os
 import sys
-import csv
-import pytz
 import datetime
-import dateutil.parser
+import pymysql
 import numpy
-import matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 import matplotlib.ticker as ticker
@@ -15,29 +12,12 @@ import matplotlib.patches as mpatches
 
 import private
 
-
-def parse(zone):
-    timestamps = []
-    values = []
-
-    dirname = os.path.dirname(sys.argv[0])
-    csv_reader = csv.reader(open("{}/{}.csv".format(dirname, zone)))
-    for line in csv_reader:
-        timestamp = pytz.utc.localize(dateutil.parser.parse(line.pop(0)))
-        timestamps.append(timestamp)
-        for i in range(len(line)):
-            if i >= len(values):
-                values.append([])
-            values[i].append(float(line[i]))
-
-    return timestamps, values
-
 def plot(zone, timestamps, values, time_lower, time_upper, name):
     outsideTemperature, setpoint, temperature, humidity, heatingpower = values
     # temperature can be NaN (heating off)
     temperature = numpy.ma.masked_where(numpy.isnan(temperature), temperature)
     # also mask heatingpower==0 for clarity
-    heatingpower = numpy.ma.masked_where(numpy.array(heatingpower) == 0, heatingpower)
+    heatingpower = numpy.ma.masked_where(numpy.equal(temperature, 0), heatingpower)
 
 
     # initialize
@@ -115,17 +95,35 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
 
 ## main
 
-matplotlib.rcParams['timezone'] = private.timezone
+mysql = pymysql.connect(host=private.mysql_hostname,
+                        user=private.mysql_user,
+                        password=private.mysql_password,
+                        db=private.mysql_db)
+
+time_lower = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+time_upper = time_lower + datetime.timedelta(days=1)
 
 for zone in private.zones:
-    timestamps, values = parse(zone)
+    with mysql.cursor() as cursor:
+        sql = """
+            SELECT *
+            FROM `{}`
+            WHERE (timestamp >= %s and timestamp < %s)
+        """.format(zone)
+        cursor.execute(sql, (time_lower, time_upper))
+        data = cursor.fetchall()
 
-    tz = pytz.timezone(private.timezone)
-    start = timestamps[0]
-    end = timestamps[-1]
+        timestamps = numpy.asarray(list(map(lambda vals: vals[0], data)))
+        def convert(val):
+            if val is None:
+                # we can't create an array with None, or operations like 'isfinite' break
+                return float('NaN')
+            else:
+                return float(val)
+        values = numpy.asarray(list(map(lambda vals: tuple(map(convert, vals[1:])), data))).T
 
-    # plot daily chart
-    time_lower = tz.normalize(end).replace(hour=0, minute=0, second=0, microsecond=0)
-    time_upper = time_lower + datetime.timedelta(days=1)
-    plot(zone, timestamps, values, time_lower, time_upper,
-         "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
+        # plot daily chart
+        plot(zone, timestamps, values, time_lower, time_upper,
+             "{:04d}{:02d}{:02d}_{}".format(time_lower.year, time_lower.month, time_lower.day, zone))
+
+mysql.close()
