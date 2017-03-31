@@ -14,10 +14,9 @@ import private
 
 def plot(zone, timestamps, values, time_lower, time_upper, name):
     outsideTemperature, setpoint, temperature, humidity, heatingpower = values
-    # temperature can be NaN (heating off)
-    temperature = numpy.ma.masked_where(numpy.isnan(temperature), temperature)
-    # also mask heatingpower==0 for clarity
-    heatingpower = numpy.ma.masked_where(numpy.equal(temperature, 0), heatingpower)
+
+    # mask heatingpower==0 for clarity
+    heatingpower = numpy.ma.masked_where(heatingpower == 0, heatingpower)
 
 
     # initialize
