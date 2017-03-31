@@ -27,5 +27,5 @@ or explicitely use one of the `python` binaries in the `bin` subfolder.
 
 - create `private.py` with information about your set-up (see
   [`private.py.sample`](private.py.sample) for an example)
-- run `collect.py` every minute or so to gather information for each zone in a CSV file
+- run `collect.py` every minute or so to gather information for each zone
 - run `plot.py` to generate a chart for today's state of each zone
