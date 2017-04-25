@@ -1,4 +1,2 @@
 env
-*.png
 __pycache__
-private.py

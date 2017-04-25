@@ -1,7 +1,14 @@
 #!/usr/bin/env python3
 
+import os
+import sys
 import pymysql
 import warnings
+
+bindir = os.path.dirname(os.path.realpath(__file__))
+root = os.path.dirname(bindir)
+libdir = os.path.join(root, 'lib')
+sys.path.append(libdir)
 
 from api import API
 import private
