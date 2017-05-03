@@ -13,9 +13,16 @@ from scipy.signal import savgol_filter
 
 import private
 
+from enum import Enum
+class Resolution(Enum):
+    COARSE = 1
+    FINE = 2
 
-def smooth(y):
-    return savgol_filter(y, 41, 1)
+def smooth(y, factor=Resolution.FINE):
+    if factor == Resolution.COARSE:
+        return savgol_filter(y, 75, 1)
+    if factor == Resolution.FINE:
+        return savgol_filter(y, 31, 2)
 
 
 def plot(zone, timestamps, values, time_lower, time_upper, name):
@@ -40,7 +47,7 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     ax1.yaxis.set_major_locator(ticker.MultipleLocator(1))
     ax1.yaxis.grid(alpha=0.25)
 
-    ax1.plot(timestamps, smooth(outsideTemperature), label="Outside",
+    ax1.plot(timestamps, smooth(outsideTemperature, Resolution.COARSE), label="Outside",
              linestyle="solid", color="gray")
 
     ax1.plot(timestamps, setpoint, label="Setpoint",
