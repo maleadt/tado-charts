@@ -4,8 +4,6 @@ password = "bar"
 home = "Foo's Home"
 zones = ["Kitchen", "Bedroom"]
 
-timezone = 'Europe/Brussels'
-
 mysql_hostname = 'localhost'
 mysql_user = 'tado'
 mysql_password = 'tado_password'
