@@ -26,6 +26,6 @@ explicitly use one of the `python` binaries in the `bin` subfolder.
 ## Usage
 
 - create `private.py` with information about your set-up (see
-  [`private.py.sample`](private.py.sample) for an example)
+  [`private.py.sample`](bin/private.py.sample) for an example)
 - run `collect.py` every minute or so to gather information for each zone
 - run `plot.py` to generate a chart for today's state of each zone
