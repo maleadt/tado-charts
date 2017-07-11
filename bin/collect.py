@@ -10,7 +10,7 @@ root = os.path.dirname(bindir)
 libdir = os.path.join(root, 'lib')
 sys.path.append(libdir)
 
-from api import API
+from PyTado.interface import Tado
 import private
 
 mysql = pymysql.connect(host=private.mysql_hostname,
@@ -18,17 +18,16 @@ mysql = pymysql.connect(host=private.mysql_hostname,
                         password=private.mysql_password,
                         db=private.mysql_db)
 
-api = API(private.username, private.password)
+api = Tado(private.username, private.password)
 
-me = api.getUser()
-home = me.getHome(name=private.home)
-
-weather = home.getWeather()
+weather = api.getWeather()
 outsideTemperature = weather["outsideTemperature"]["celsius"]
 
+zones = {zone["name"]: zone["id"] for zone in api.getZones()}
+
 for name in private.zones:
-    zone = home.getZone(name=name)
-    state = zone.getState()
+    zone = zones[name]
+    state = api.getState(zone)
 
     # create new table
     with warnings.catch_warnings(), mysql.cursor() as cursor:
