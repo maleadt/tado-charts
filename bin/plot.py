@@ -19,10 +19,24 @@ class Resolution(Enum):
     FINE = 2
 
 def smooth(y, factor=Resolution.FINE):
+    points = len(y)
+    if points <= 3:
+        return y
+
     if factor == Resolution.COARSE:
-        return savgol_filter(y, 75, 1)
+        window_length = 75
+        polyorder = 1
     if factor == Resolution.FINE:
-        return savgol_filter(y, 31, 2)
+        window_length = 31
+        polyorder = 2
+
+    if window_length > points:
+        window_length = (points if points%2 == 1 else points-1)
+    if polyorder >= window_length:
+        polyorder = window_length - 1
+
+    return savgol_filter(y, window_length, polyorder)
+
 
 
 def plot(zone, timestamps, values, time_lower, time_upper, name):
