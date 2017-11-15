@@ -4,7 +4,12 @@ password = "bar"
 home = "Foo's Home"
 zones = ["Kitchen", "Bedroom"]
 
-mysql_hostname = 'localhost'
+# database properties
+#
+# if using the default Docker configuration, this information is provided by
+# means of environment variables (see db.env) in which case the variables below
+# still need to be defined, but their values are ignored
+mysql_host = 'localhost'
 mysql_user = 'tado'
-mysql_password = 'tado_password'
-mysql_db = 'tado'
+mysql_password = 'tado'
+mysql_database = 'tado'

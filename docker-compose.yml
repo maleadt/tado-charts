@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+    db:
+        image: mysql:5.7
+        volumes:
+            - db_data:/var/lib/mysql
+        restart: always
+        env_file:
+            - db.env
+        expose:
+            - "3306"
+
+    container:
+        depends_on:
+            - db
+        build: .
+        volumes:
+            - ./output:/output
+        environment:
+            MYSQL_HOST: db
+        env_file:
+            - db.env
+
+volumes:
+    db_data:

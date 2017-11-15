@@ -1,0 +1,2 @@
+* * * * *   root . /root/.profile && /opt/tado/collect.py      > /proc/1/fd/1 2>/proc/1/fd/2
+*/5 * * * * root . /root/.profile && /opt/tado/plot.py /output > /proc/1/fd/1 2>/proc/1/fd/2

@@ -13,6 +13,11 @@ from scipy.signal import savgol_filter
 
 import private
 
+if len(sys.argv) > 1:
+    output_dir = sys.argv[1]
+else:
+    output_dir = os.path.dirname(sys.argv[0])
+
 from enum import Enum
 class Resolution(Enum):
     COARSE = 1
@@ -113,16 +118,15 @@ def plot(zone, timestamps, values, time_lower, time_upper, name):
     plt.tight_layout()
     fig.subplots_adjust(bottom=0.15)
 
-    dirname = os.path.dirname(sys.argv[0])
-    plt.savefig("{}/{}.png".format(dirname, name))
+    plt.savefig("{}/{}.png".format(output_dir, name))
 
 
 ## main
 
-mysql = pymysql.connect(host=private.mysql_hostname,
-                        user=private.mysql_user,
-                        password=private.mysql_password,
-                        db=private.mysql_db)
+mysql = pymysql.connect(host=os.getenv('MYSQL_HOST', private.mysql_host),
+                        user=os.getenv('MYSQL_USER', private.mysql_user),
+                        password=os.getenv('MYSQL_PASSWORD', private.mysql_password),
+                        db=os.getenv('MYSQL_DATABASE', private.mysql_database))
 
 time_lower = datetime.datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 time_upper = time_lower + datetime.timedelta(days=1)

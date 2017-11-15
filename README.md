@@ -7,25 +7,43 @@ chart](res/example.png).
 NOTE: this software is not official, and makes use of (currently) undocumented APIs.
 
 
-## Installation
+## Set-up and usage
 
-Python 3.0 (See [`requirements.txt`](requirements.txt) for the required packages).
+### With Docker
 
-For example, using `pip` and a `virtualenv` (after having cloned this repo to `tado-charts`):
+1. create `bin/private.py` from
+   [`bin/private.py.sample`](bin/private.py.sample), ignoring the database
+   variables (these are provisioned differently with Docker)
+2. run `docker-compose up`
 
-```
-$ virtualenv --python=python3 env
-$ . env/bin/activate
-$ pip install -r tado-charts/requirements.txt
-```
+By default, data is collected every minute and plots are generated in the
+`output` folder every five minutes (see [`crontab`](crontab)), with default
+database settings provided by [`db.env`](db.env).
 
-Note that you need to activate the virtual environment every time you want to use it, or
-explicitly use one of the `python` binaries in the `bin` subfolder.
+**NOTE**: after an update, or when modifying files like `private.py`, first run
+`docker-compose build` to rebuild the image and include the modified files
+before starting the container again.
 
 
-## Usage
+### Manual
 
-- create `private.py` with information about your set-up (see
-  [`private.py.sample`](bin/private.py.sample) for an example)
+Set-up:
+1. install `python3` as well as all required packages as listed in
+   [`requirements.txt`](requirements.txt). Use a virtual environment for
+   convenience:
+
+    ```
+    $ virtualenv --python=python3 env
+    $ . env/bin/activate
+    $ pip install -r $THIS_REPO/requirements.txt
+    ```
+2. install and configure MySQL, creating a user and granting it permissions on a
+   database.
+3. create `bin/private.py` from
+   [`bin/private.py.sample`](bin/private.py.sample).
+
+Usage:
+- activate the virtual environment with `. env/bin/activate` or use the `python`
+  binary from the `bin` subfolder of the environment.
 - run `collect.py` every minute or so to gather information for each zone
 - run `plot.py` to generate a chart for today's state of each zone

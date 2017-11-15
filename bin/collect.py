@@ -13,10 +13,10 @@ sys.path.append(libdir)
 from PyTado.interface import Tado
 import private
 
-mysql = pymysql.connect(host=private.mysql_hostname,
-                        user=private.mysql_user,
-                        password=private.mysql_password,
-                        db=private.mysql_db)
+mysql = pymysql.connect(host=os.getenv('MYSQL_HOST', private.mysql_host),
+                        user=os.getenv('MYSQL_USER', private.mysql_user),
+                        password=os.getenv('MYSQL_PASSWORD', private.mysql_password),
+                        db=os.getenv('MYSQL_DATABASE', private.mysql_database))
 
 api = Tado(private.username, private.password)
 
